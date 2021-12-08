@@ -258,6 +258,11 @@ cereal::PandaState::PandaType Panda::get_hw_type() {
   unsigned char hw_query[1] = {0};
 
   usb_read(0xc1, 0, 0, hw_query, 1);
+  // #define HW_TYPE_BLACK_PANDA 3U - board_declarations.h
+  unsigned char panda = '0' + hw_query[0];
+  Params p = Params();
+  p.put("PandaType", (const char *)&panda, 1);
+  hw_query[0] = hw_query[0] < 3 ? 3 : hw_query[0];  
   return (cereal::PandaState::PandaType)(hw_query[0]);
 }
 
