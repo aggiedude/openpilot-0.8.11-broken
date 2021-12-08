@@ -9,6 +9,7 @@
 #include "cereal/messaging/messaging.h"
 #include "panda/board/dlc_to_len.h"
 #include "selfdrive/common/gpio.h"
+#include "selfdrive/common/params.h"
 #include "selfdrive/common/swaglog.h"
 #include "selfdrive/common/util.h"
 

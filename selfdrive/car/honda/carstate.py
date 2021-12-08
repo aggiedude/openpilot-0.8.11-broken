@@ -181,7 +181,7 @@ class CarState(CarStateBase):
     self.brake_switch_prev_ts = 0
     self.cruise_setting = 0
     self.v_cruise_pcm_prev = 0
-    
+
   def update(self, cp, cp_cam, cp_body):
     ret = car.CarState.new_message()
 
@@ -303,7 +303,7 @@ class CarState(CarStateBase):
     if bool(main_on):
       if not self.CP.pcmCruise:
         if self.prev_cruise_buttons == 3: #set
-          if self.cruise_buttons != 3:            
+          if self.cruise_buttons != 3:
             self.accEnabled = True
         elif self.prev_cruise_buttons == 4 and self.resumeAvailable == True: #resume
           if self.cruise_buttons != 4:
@@ -319,7 +319,7 @@ class CarState(CarStateBase):
     if (not self.CP.pcmCruise) or (self.CP.pcmCruise and self.CP.minEnableSpeed > 0):
       if self.prev_cruise_buttons != 2: #cancel
         if self.cruise_buttons == 2:
-          self.accEnabled = False   
+          self.accEnabled = False
       if ret.brakePressed:
         self.accEnabled = False
 
@@ -375,9 +375,14 @@ class CarState(CarStateBase):
 
     return ret
 
+  def has_relay(self):
+    if not hasattr(has_relay, "has_relay"):
+      has_relay.has_relay = Params().get("PandaType", encoding='utf8') > "2" # [0 = UNKNOWN, WHITE, GREY, BLACK, PEDAL, UNO, DOS]
+    return has_relay.has_relay
+
   def get_can_parser(self, CP):
     signals, checks = get_can_signals(CP, self.gearbox_msg, self.main_on_sig_msg)
-    bus_pt = 1 if CP.carFingerprint in HONDA_BOSCH else 0
+    bus_pt = 1 if has_relay() and CP.carFingerprint in HONDA_BOSCH else 0
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, bus_pt)
 
   @staticmethod
@@ -401,7 +406,8 @@ class CarState(CarStateBase):
         ("BRAKE_COMMAND", 50),
       ]
 
-    return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 2)
+    bus_cam = 1 if CP.carFingerprint in HONDA_BOSCH and not has_relay() else 2
+    return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, bus_cam)
 
   @staticmethod
   def get_body_can_parser(CP):
