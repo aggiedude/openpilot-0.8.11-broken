@@ -64,7 +64,7 @@ class Controls:
     self.accel_pressed_last = 0.
     self.decel_pressed_last = 0.
     self.fastMode = False
-    
+
     # Setup sockets
     self.pm = pm
     if self.pm is None:
@@ -436,7 +436,7 @@ class Controls:
           self.decel_pressed_last = cur_time
           self.fastMode = True
       else:
-        self.fastMode = False          
+        self.fastMode = False
     elif self.CP.pcmCruise and CS.cruiseState.enabled:
       self.v_cruise_kph = CS.cruiseState.speed * CV.MS_TO_KPH
 
@@ -660,7 +660,7 @@ class Controls:
     self.AM.process_alerts(self.sm.frame, clear_event)
     CC.hudControl.visualAlert = self.AM.visual_alert
 
-    if not self.read_only and self.initialized:
+    if not self.read_only:
       # send car controls over can
       can_sends = self.CI.apply(CC)
       self.pm.send('sendcan', can_list_to_can_capnp(can_sends, msgtype='sendcan', valid=CS.canValid))
@@ -755,7 +755,7 @@ class Controls:
 
     self.update_events(CS)
 
-    if not self.read_only and self.initialized:
+    if not self.read_only:
       # Update control state
       self.state_transition(CS)
       self.prof.checkpoint("State transition")
