@@ -10,6 +10,8 @@ from selfdrive.car.honda.values import CAR, DBC, STEER_THRESHOLD, SPEED_FACTOR, 
 
 TransmissionType = car.CarParams.TransmissionType
 
+def has_relay():
+  return Params().get("PandaType", encoding='utf8') > "2" # [0 = UNKNOWN, WHITE, GREY, BLACK, PEDAL, UNO, DOS]
 
 def get_can_signals(CP, gearbox_msg, main_on_sig_msg):
   # this function generates lists for signal, messages and initial values
@@ -375,14 +377,9 @@ class CarState(CarStateBase):
 
     return ret
 
-  def has_relay(self):
-    if not hasattr(has_relay, "has_relay"):
-      has_relay.has_relay = Params().get("PandaType", encoding='utf8') > "2" # [0 = UNKNOWN, WHITE, GREY, BLACK, PEDAL, UNO, DOS]
-    return has_relay.has_relay
-
   def get_can_parser(self, CP):
     signals, checks = get_can_signals(CP, self.gearbox_msg, self.main_on_sig_msg)
-    bus_pt = 1 if self.has_relay() and CP.carFingerprint in HONDA_BOSCH else 0
+    bus_pt = 1 if has_relay() and CP.carFingerprint in HONDA_BOSCH else 0
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, bus_pt)
 
   @staticmethod
