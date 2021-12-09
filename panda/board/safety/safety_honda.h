@@ -43,6 +43,15 @@ AddrCheckStruct honda_nidec_alt_addr_checks[] = {
 };
 #define HONDA_NIDEC_ALT_ADDR_CHECKS_LEN (sizeof(honda_nidec_alt_addr_checks) / sizeof(honda_nidec_alt_addr_checks[0]))
 
+// Nidec and Bosch giraffe have pt on bus 0
+AddrCheckStruct honda_giraffe_rx_checks[] = {
+  {.msg = {{0x1A6, 0, 8, .check_checksum = true, .max_counter = 3U, .expected_timestep = 40000U},
+           {0x296, 0, 4, .check_checksum = true, .max_counter = 3U, .expected_timestep = 40000U},{ 0 }}},
+  {.msg = {{0x158, 0, 8, .check_checksum = true, .max_counter = 3U, .expected_timestep = 10000U}, { 0 }, { 0 }}},
+  {.msg = {{0x17C, 0, 8, .check_checksum = true, .max_counter = 3U, .expected_timestep = 10000U}, { 0 }, { 0 }}},
+};
+const int HONDA_GIRAFFE_RX_CHECKS_LEN = sizeof(honda_giraffe_rx_checks) / sizeof(honda_giraffe_rx_checks[0]);
+
 // Bosch harness has pt on bus 1
 AddrCheckStruct honda_bh_addr_checks[] = {
   {.msg = {{0x296, 1, 4, .check_checksum = true, .max_counter = 3U, .expected_timestep = 40000U}, { 0 }, { 0 }}},
@@ -61,7 +70,7 @@ int honda_brake = 0;
 bool honda_alt_brake_msg = false;
 bool honda_fwd_brake = false;
 bool honda_bosch_long = false;
-enum {HONDA_N_HW, HONDA_BH_HW} honda_hw = HONDA_N_HW;
+enum {HONDA_N_HW, HONDA_BG_HW, HONDA_BH_HW} honda_hw = HONDA_N_HW;
 addr_checks honda_rx_checks = {honda_nidec_addr_checks, HONDA_NIDEC_ADDR_CHECKS_LEN};
 
 
@@ -370,7 +379,8 @@ static const addr_checks* honda_bosch_giraffe_init(int16_t param) {
   honda_alt_brake_msg = GET_FLAG(param, HONDA_PARAM_ALT_BRAKE);
   // radar disabled so allow gas/brakes
   honda_bosch_long = GET_FLAG(param, HONDA_PARAM_BOSCH_LONG);
-  honda_alt_lkas_button = false;
+  honda_rx_checks = (addr_checks){honda_giraffe_rx_checks, HONDA_GIRAFFE_RX_CHECKS_LEN};
+  return &honda_rx_checks;
 }
 
 static const addr_checks* honda_bosch_harness_init(int16_t param) {
