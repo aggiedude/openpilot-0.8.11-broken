@@ -28,7 +28,8 @@ void set_power_save_state(int state) {
       enable = true;
     }
 
-    current_board->enable_can_transceivers(enable);
+    // For White or Grey Panda, always keep the CAN transceivers for transparent forwarding
+    current_board->enable_can_transceivers(current_board->has_obd ? enable : true);
 
     // Switch EPS/GPS
     if (enable) {

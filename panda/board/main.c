@@ -114,8 +114,11 @@ void set_safety_mode(uint16_t mode, int16_t param) {
       set_intercept_relay(false);
       if (current_board->has_obd) {
         current_board->set_can_mode(CAN_MODE_NORMAL);
+        can_silent = ALL_CAN_SILENT;
       }
-      can_silent = ALL_CAN_SILENT;
+      else {  // For White or Gray Panda, always keep CAN LIVE for transparent forwarding
+        can_silent = ALL_CAN_LIVE;
+      }
       break;
     case SAFETY_NOOUTPUT:
       set_intercept_relay(false);
