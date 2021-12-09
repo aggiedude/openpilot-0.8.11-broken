@@ -41,7 +41,7 @@ class CarInterface(CarInterfaceBase):
     ret.carName = "honda"
 
     if candidate in HONDA_BOSCH:
-      ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hondaBoschGiraffe)]
+      ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hondaBoschHarness)]
       ret.radarOffCan = True
 
       # Disable the radar and let openpilot control longitudinal
@@ -61,7 +61,7 @@ class CarInterface(CarInterfaceBase):
       ret.enableBsm = 0x12f8bfa7 in fingerprint[0]
 
     # Accord 1.5T CVT has different gearbox message
-    if candidate == CAR.ACCORD and 0x191 in fingerprint[1]:
+    if candidate == CAR.ACCORD and 0x191 in fingerprint[0]:
       ret.transmissionType = TransmissionType.cvt
 
     # Certain Hondas have an extra steering sensor at the bottom of the steering rack,
