@@ -23,7 +23,7 @@ class CarInterface(CarInterfaceBase):
 
     self.last_enable_pressed = 0
     self.last_enable_sent = 0
-    
+
   @staticmethod
   def get_pid_accel_limits(CP, current_speed, cruise_speed):
     if CP.carFingerprint in HONDA_BOSCH:
@@ -41,7 +41,7 @@ class CarInterface(CarInterfaceBase):
     ret.carName = "honda"
 
     if candidate in HONDA_BOSCH:
-      ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hondaBoschHarness)]
+      ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hondaBoschGiraffe)]
       ret.radarOffCan = True
 
       # Disable the radar and let openpilot control longitudinal
@@ -439,7 +439,7 @@ class CarInterface(CarInterfaceBase):
     if not ret.brakePressed and not ret.brakeHoldActive:
       self.CS.disengageByBrake = False
       ret.disengageByBrake = False
-    
+
     # handle button presses
     for b in ret.buttonEvents:
 

@@ -1,5 +1,6 @@
 from selfdrive.car.honda.values import HONDA_BOSCH, CAR, CarControllerParams
 from selfdrive.config import Conversions as CV
+from common.params import Params
 
 # CAN bus layout with relay
 # 0 = ACC-CAN - radar side
@@ -8,9 +9,7 @@ from selfdrive.config import Conversions as CV
 # 3 = F-CAN A - OBDII port
 
 def has_relay():
-  if not hasattr(has_relay, "has_relay"):
-    has_relay.has_relay = Params().get("PandaType", encoding='utf8') > "2" # [0 = UNKNOWN, WHITE, GREY, BLACK, PEDAL, UNO, DOS]
-  return has_relay.has_relay
+  return Params().get("PandaType", encoding='utf8') > "2" # [0 = UNKNOWN, WHITE, GREY, BLACK, PEDAL, UNO, DOS]
 
 def get_pt_bus(car_fingerprint):
     return 1 if car_fingerprint in HONDA_BOSCH and has_relay() else 0
